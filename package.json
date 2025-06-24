@@ -6,7 +6,10 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "server": "node src/server.js",
+    "server:dev": "nodemon src/server.js",
+    "start-backend": "node start-server.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

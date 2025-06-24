@@ -67,7 +67,8 @@
                 <button onclick="deleteDrill()" class="btn-danger">Delete Drill</button>
             </div>
             <div id="rescheduleSection" class="hidden">
-                <input type="datetime-local" id="newScheduleDate">
+                <label for="newScheduleDate" class="visually-hidden">New Schedule Date</label>
+                <input type="datetime-local" id="newScheduleDate" placeholder="Select new date and time" title="Select new date and time">
                 <button onclick="reschedule()" class="btn-primary">Update Schedule</button>
             </div>
         </div>
