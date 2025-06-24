@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drill Tracker - Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Drill Tracker Dashboard</h1>
+            <div class="user-info">
+                <span id="userName"></span>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </header>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Drills</h3>
+                <span id="totalDrills" class="stat-number">12</span>
+            </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <span id="completedDrills" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Progress</h3>
+                <span id="progressPercent" class="stat-number">0%</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="generateSchedule()" class="btn-primary">Generate Event Schedule</button>
+            <div class="date-inputs">
+                <input type="date" id="startDate" placeholder="Start Date">
+                <input type="date" id="endDate" placeholder="End Date">
+            </div>
+        </div>
+        
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <button onclick="previousMonth()" class="nav-btn">&lt;</button>
+                <h2 id="currentMonth"></h2>
+                <button onclick="nextMonth()" class="nav-btn">&gt;</button>
+            </div>
+            <div id="calendar" class="calendar"></div>
+        </div>
+        
+        <div class="drills-container">
+            <h2>Drill Schedule</h2>
+            <div id="drillsList" class="drills-list"></div>
+        </div>
+    </div>
+    
+    <!-- Modal for drill details -->
+    <div id="drillModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDrillModal()">&times;</span>
+            <h2 id="modalDrillName"></h2>
+            <p><strong>Scheduled Date:</strong> <span id="modalScheduledDate"></span></p>
+            <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+            <div id="modalActions">
+                <button onclick="markCompleted()" class="btn-success">Mark Completed</button>
+                <button onclick="showReschedule()" class="btn-warning">Reschedule</button>
+                <button onclick="deleteDrill()" class="btn-danger">Delete Drill</button>
+            </div>
+            <div id="rescheduleSection" class="hidden">
+                <input type="datetime-local" id="newScheduleDate">
+                <button onclick="reschedule()" class="btn-primary">Update Schedule</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
