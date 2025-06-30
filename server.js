@@ -47,6 +47,7 @@ const path = require('path');
 const authRoutes = require('./backend/src/routes/auth');
 const drillRoutes = require('./backend/src/routes/drills');
 const userRoutes = require('./backend/src/routes/users');
+const organizationRoutes = require('./backend/src/routes/organizations');
 
 
 // =====================================================
@@ -103,15 +104,7 @@ app.use(express.static(path.join(__dirname, 'frontend/public'), {
 // DATABASE CONNECTION & CONFIGURATION
 // =====================================================
 
-/**
- * MongoDB Connection Setup
- * 
- * For GCP deployment:
- * - Use MongoDB Atlas cloud database
- * - Set MONGODB_URI in Cloud Run environment variables
- * - Ensure IP whitelist includes 0.0.0.0/0 for Cloud Run
- * - Use connection pooling for better performance
- */
+
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -167,6 +160,9 @@ app.use('/api/drills', drillRoutes);
 
 // User management routes - user profile and settings
 app.use('/api/users', userRoutes);
+
+// Organization management routes - company and organization CRUD
+app.use('/api/organizations', organizationRoutes);
 
 
 // =====================================================

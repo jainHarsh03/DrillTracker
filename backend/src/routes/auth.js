@@ -13,14 +13,24 @@ const router = express.Router()
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, organization } = req.body
+    const { name, email, password, organization, teamId, role = "member" } = req.body
 
     const existingUser = await User.findOne({ email })
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" })
     }
 
-    const user = new User({ name, email, password, organization })
+    // If no teamId provided, generate one based on organization
+    const finalTeamId = teamId || `${organization.toLowerCase().replace(/\s+/g, '-')}-team-1`
+
+    const user = new User({ 
+      name, 
+      email, 
+      password, 
+      organization,
+      teamId: finalTeamId,
+      role: role
+    })
     await user.save()
 
     // Initialize default drills
@@ -59,6 +69,8 @@ router.post("/register", async (req, res) => {
         name: user.name,
         email: user.email,
         organization: user.organization,
+        teamId: user.teamId,
+        role: user.role,
       },
     })
   } catch (error) {
@@ -91,6 +103,8 @@ router.post("/login", async (req, res) => {
         name: user.name,
         email: user.email,
         organization: user.organization,
+        teamId: user.teamId,
+        role: user.role,
       },
     })
   } catch (error) {
@@ -106,6 +120,8 @@ router.get("/me", auth, async (req, res) => {
       name: req.user.name,
       email: req.user.email,
       organization: req.user.organization,
+      teamId: req.user.teamId,
+      role: req.user.role,
       totalDrills: req.user.totalDrills,
       drillsCompleted: req.user.drillsCompleted,
       drillHistory: req.user.drillHistory,

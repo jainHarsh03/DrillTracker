@@ -24,7 +24,26 @@ const drillSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    completedDate: Date,
+    completedAt: {
+      type: Date,
+      default: null,
+    },
+    teamId: {
+      type: String,
+      required: false,
+      trim: true,
+      default: "default-team",
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false, // Make it optional to prevent update errors
+    },
+    visibility: {
+      type: String,
+      enum: ["private", "team", "organization"],
+      default: "team",
+    },
     status: {
       type: String,
       enum: ["scheduled", "completed", "missed"],

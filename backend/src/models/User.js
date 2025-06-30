@@ -29,6 +29,16 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    teamId: {
+      type: String,
+      required: false,  // Make teamId optional
+      trim: true,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "member", "leader"],
+      default: "member",
+    },
     totalDrills: {
       type: Number,
       default: 12,

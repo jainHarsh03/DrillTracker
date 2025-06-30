@@ -53,7 +53,19 @@
                     </div>
                     <div class="form-group">
                         <label for="registerOrganization">Organization</label>
-                        <input type="text" id="registerOrganization" name="organization" placeholder="Enter your organization (optional)">
+                        <input type="text" id="registerOrganization" name="organization" required placeholder="Enter your organization">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerTeamId">Team ID</label>
+                        <input type="text" id="registerTeamId" name="teamId" placeholder="Enter team ID (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerRole">Role</label>
+                        <select id="registerRole" name="role">
+                            <option value="member">Member</option>
+                            <option value="leader">Team Leader</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="registerPassword">Password</label>
@@ -73,118 +85,114 @@
          DASHBOARD PAGE
          =================================================== -->
     <div id="dashboardPage" class="page">
-        <div class="container">
-            <!-- Header Section -->
-            <div class="header">
-                <h1>🏃‍♂️ Drill Tracker Dashboard</h1>
-                <div class="user-info">
-                    <span class="user-name">Welcome back, <span id="userName">User</span>!</span>
-                    <button onclick="logout()" class="btn-secondary">Logout</button>
+        <div class="dashboard-layout">
+            <!-- Organizations Sidebar -->
+            <div class="organizations-sidebar">
+                <div class="sidebar-header">
+                    <h3>🏢 Organizations</h3>
+                    <button onclick="showAddOrganizationModal()" class="btn-small">+ Add</button>
+                </div>
+                <div id="organizationsList" class="organizations-list">
+                    <!-- Organizations will be loaded here -->
                 </div>
             </div>
 
-            <!-- Stats Section -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <h3>Total Drills</h3>
-                    <div class="stat-number" id="totalDrills">0</div>
+            <!-- Main Dashboard Content -->
+            <div class="main-content">
+                <!-- Header Section -->
+                <div class="header">
+                    <h1>🏃‍♂️ Drill Tracker Dashboard</h1>
+                    <div class="user-info">
+                        <span class="user-name">Welcome back, <span id="userName">User</span>!</span>
+                        <button onclick="logout()" class="btn-secondary">Logout</button>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h3>Completed</h3>
-                    <div class="stat-number" id="completedDrills">0</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Success Rate</h3>
-                    <div class="stat-number" id="successRate">0%</div>
-                </div>
-                <div class="stat-card">
-                    <h3>This Week</h3>
-                    <div class="stat-number" id="weeklyDrills">0</div>
-                </div>
-            </div>
-            
-            <!-- Controls Section -->
-            <div class="controls">
-                <button onclick="showAddDrillModal()" class="btn-primary">✨ Add New Drill</button>
-                <button onclick="generateSchedule()" class="btn-primary">🎯 Generate Event Schedule</button>
-                <div class="date-inputs">
-                    <input type="date" id="filterStartDate" placeholder="Start Date">
-                    <input type="date" id="filterEndDate" placeholder="End Date">
-                    <button onclick="filterDrills()" class="btn-primary">🔍 Filter</button>
-                </div>
-            </div>
-            
-            <!-- Main Content Area with Three-Column Layout -->
-            <div class="main-content-grid">
-                <!-- Left Column: Drills List -->
-                <div class="left-panel">
-                    <div class="drills-container">
-                        <h2>📋 Drill Schedule</h2>
-                        <div id="drillsList" class="drills-list"></div>
+
+                <!-- Stats Section -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Total Drills</h3>
+                        <div class="stat-number" id="totalDrills">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Completed</h3>
+                        <div class="stat-number" id="completedDrills">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Success Rate</h3>
+                        <div class="stat-number" id="successRate">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Week</h3>
+                        <div class="stat-number" id="weeklyDrills">0</div>
                     </div>
                 </div>
                 
-                <!-- Center Column: Calendar -->
-                <div class="center-panel">
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <button class="nav-btn" onclick="previousMonth()">◀</button>
-                            <h2 id="currentMonth">Loading...</h2>
-                            <button class="nav-btn" onclick="nextMonth()">▶</button>
-                        </div>
-                        <div id="calendar" class="calendar"></div>
+                <!-- Controls Section -->
+                <div class="controls">
+                    <button onclick="showAddDrillModal()" class="btn-primary">✨ Add New Drill</button>
+                    <button onclick="showOrganizationModal()" class="btn-primary">🏢 Manage Organizations</button>
+                    <button onclick="generateSchedule()" class="btn-primary">🎯 Generate Event Schedule</button>
+                    <div class="date-inputs">
+                        <input type="date" id="filterStartDate" placeholder="Start Date">
+                        <input type="date" id="filterEndDate" placeholder="End Date">
+                        <button onclick="filterDrills()" class="btn-primary">🔍 Filter</button>
                     </div>
                 </div>
                 
-                <!-- Right Column: Task Drill Container -->
-                <div class="right-panel">
-                    <div class="task-drill-container">
-                        <h2>🎯 Quick Actions</h2>
-                        
-                        <!-- Quick Add Drill Form -->
-                        <div class="quick-add-section">
-                            <h3>➕ Quick Add Drill</h3>
-                            <form id="quickAddForm" class="quick-form">
-                                <input type="text" id="quickDrillName" placeholder="Drill name..." required>
-                                <input type="datetime-local" id="quickDrillDate" title="Select drill date and time" required>
-                                <textarea id="quickDrillDescription" placeholder="Description (optional)..." rows="2"></textarea>
-                                <button type="submit" class="btn-quick">Add Drill</button>
-                            </form>
-                        </div>
-                        
-                        <!-- Today's Drills -->
-                        <div class="today-drills-section">
-                            <h3>� Today's Drills</h3>
-                            <div id="todayDrillsList" class="today-drills-list">
-                                <!-- Today's drills will be populated here -->
+                <!-- Filter Controls -->
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter" onchange="applyFilters()">
+                            <option value="">All Statuses</option>
+                            <option value="completed">Completed</option>
+                            <option value="incomplete">Incomplete</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="missed">Missed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="teamFilter">View:</label>
+                        <select id="teamFilter" onchange="applyFilters()">
+                            <option value="team">My Team</option>
+                            <option value="my">My Drills Only</option>
+                            <option value="organization">Organization</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="visibilityFilter">Visibility:</label>
+                        <select id="visibilityFilter" onchange="applyFilters()">
+                            <option value="">All</option>
+                            <option value="private">Private</option>
+                            <option value="team">Team</option>
+                            <option value="organization">Organization</option>
+                        </select>
+                    </div>
+                    <button onclick="clearFilters()" class="btn-secondary">Clear Filters</button>
+                </div>
+                
+                <!-- Main Content Layout -->
+                <div class="main-layout">
+                    <!-- Center Panel: Calendar -->
+                    <div class="center-panel">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="nav-btn" onclick="previousMonth()">◀</button>
+                                <h2 id="currentMonth">Loading...</h2>
+                                <button class="nav-btn" onclick="nextMonth()">▶</button>
                             </div>
+                            <div id="calendar" class="calendar"></div>
                         </div>
-                        
-                        <!-- Upcoming Drills -->
-                        <div class="upcoming-drills-section">
-                            <h3>⏰ Next 7 Days</h3>
-                            <div id="upcomingDrillsList" class="upcoming-drills-list">
-                                <!-- Upcoming drills will be populated here -->
+                    </div>
+
+                    <!-- Right Panel: Drills List -->
+                    <div class="right-panel">
+                        <div class="drills-sidebar">
+                            <div class="sidebar-header">
+                                <h3>📋 Drill Schedule</h3>
                             </div>
-                        </div>
-                        
-                        <!-- Quick Stats -->
-                        <div class="quick-stats-section">
-                            <h3>📊 Quick Stats</h3>
-                            <div class="mini-stats">
-                                <div class="mini-stat">
-                                    <span class="stat-label">This Month:</span>
-                                    <span class="stat-value" id="monthlyDrills">0</span>
-                                </div>
-                                <div class="mini-stat">
-                                    <span class="stat-label">Completed:</span>
-                                    <span class="stat-value" id="monthlyCompleted">0</span>
-                                </div>
-                                <div class="mini-stat">
-                                    <span class="stat-label">Pending:</span>
-                                    <span class="stat-value" id="monthlyPending">0</span>
-                                </div>
-                            </div>
+                            <div id="drillsList" class="drills-list"></div>
                         </div>
                     </div>
                 </div>
@@ -230,9 +238,130 @@
                         <label for="newDrillDescription">Description</label>
                         <textarea id="newDrillDescription" name="description" placeholder="Enter drill description (optional)..."></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="newDrillVisibility">Visibility</label>
+                        <select id="newDrillVisibility" name="visibility">
+                            <option value="team">Team</option>
+                            <option value="private">Private</option>
+                            <option value="organization">Organization</option>
+                        </select>
+                    </div>
                     <div class="form-actions">
                         <button type="button" onclick="closeAddDrillModal()" class="btn-secondary">❌ Cancel</button>
                         <button type="submit" class="btn-primary">🚀 Add Drill</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal for organization management -->
+        <div id="organizationModal" class="modal">
+            <div class="modal-content large-modal">
+                <span class="close" onclick="closeOrganizationModal()">&times;</span>
+                <h2>🏢 Organization Management</h2>
+                
+                <div class="org-tabs">
+                    <button class="tab-btn active" onclick="showOrgTab('create')">Create Organization</button>
+                    <button class="tab-btn" onclick="showOrgTab('schedule')">Schedule Drills</button>
+                </div>
+
+                <!-- Create Organization Tab -->
+                <div id="createOrgTab" class="org-tab-content">
+                    <form id="createOrgForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orgCompanyId">Company ID *</label>
+                                <input type="text" id="orgCompanyId" name="companyId" required placeholder="Enter company ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="orgName">Organization Name *</label>
+                                <input type="text" id="orgName" name="name" required placeholder="Enter organization name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="orgIndustry">Industry</label>
+                                <input type="text" id="orgIndustry" name="industry" placeholder="e.g., Healthcare, Technology">
+                            </div>
+                            <div class="form-group">
+                                <label for="orgLocation">Location</label>
+                                <input type="text" id="orgLocation" name="location" placeholder="City, Country">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="orgDescription">Description</label>
+                            <textarea id="orgDescription" name="description" placeholder="Brief description of the organization"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="plannedDrillsPerYear">Planned Drills Per Year</label>
+                                <input type="number" id="plannedDrillsPerYear" name="plannedDrillsPerYear" value="12" min="1" max="52">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="closeOrganizationModal()" class="btn-secondary">❌ Cancel</button>
+                            <button type="submit" class="btn-primary">🏢 Create Organization</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Schedule Drills Tab -->
+                <div id="scheduleDrillsTab" class="org-tab-content hidden">
+                    <form id="scheduleDrillsForm">
+                        <div class="form-group">
+                            <label for="scheduleOrgSelect">Select Organization *</label>
+                            <select id="scheduleOrgSelect" name="organizationId" required>
+                                <option value="">Choose an organization...</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scheduleStartDate">Start Date *</label>
+                                <input type="date" id="scheduleStartDate" name="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleEndDate">End Date *</label>
+                                <input type="date" id="scheduleEndDate" name="endDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfDrills">Number of Drills</label>
+                            <input type="number" id="numberOfDrills" name="numberOfDrills" min="1" max="52" placeholder="Auto-filled from organization settings">
+                        </div>
+                        <div class="drill-preview" id="drillPreview">
+                            <h4>📅 Drill Schedule Preview</h4>
+                            <div id="previewList"></div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="previewDrillSchedule()" class="btn-secondary">👁️ Preview Schedule</button>
+                            <button type="submit" class="btn-primary">📅 Confirm & Schedule Drills</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for adding new organization (simplified) -->
+        <div id="addOrganizationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAddOrganizationModal()">&times;</span>
+                <h2>🏢 Add New Organization</h2>
+                <form id="addOrgForm">
+                    <div class="form-group">
+                        <label for="newOrgCompanyId">Company ID *</label>
+                        <input type="text" id="newOrgCompanyId" name="companyId" required placeholder="Enter unique company ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="newOrgName">Organization Name *</label>
+                        <input type="text" id="newOrgName" name="name" required placeholder="Enter organization name">
+                    </div>
+                    <div class="form-group">
+                        <label for="newOrgDrillsPerYear">Planned Drills Per Year</label>
+                        <input type="number" id="newOrgDrillsPerYear" name="plannedDrillsPerYear" value="12" min="1" max="52">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="closeAddOrganizationModal()" class="btn-secondary">❌ Cancel</button>
+                        <button type="submit" class="btn-primary">🚀 Add Organization</button>
                     </div>
                 </form>
             </div>
@@ -371,13 +500,15 @@
             const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
             const organization = document.getElementById('registerOrganization').value;
+            const teamId = document.getElementById('registerTeamId').value;
+            const role = document.getElementById('registerRole').value;
             const password = document.getElementById('registerPassword').value;
             
             try {
                 const response = await fetch(`${API_BASE}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, organization, password })
+                    body: JSON.stringify({ name, email, organization, teamId, role, password })
                 });
                 
                 const data = await response.json();
@@ -418,23 +549,27 @@
             showLoading();
             
             try {
-                // Load user data first, then drills
+                // Load user data first, then drills and organizations
                 await loadUserData();
                 await loadDrills();
+                await loadOrganizations();
+                
+                // Create test organization if none exist
+                if (organizations.length === 0) {
+                    console.log('📋 No organizations found, creating test organization...');
+                    await createTestOrganization();
+                }
                 
                 // Update stats after drills are loaded
                 updateUserStats({ name: document.getElementById('userName').textContent });
                 
                 renderCalendar();
                 renderDrillsList();
-                renderTodayDrills();
-                renderUpcomingDrills();
-                updateQuickStats();
                 setDefaultDates();
                 
                 hideLoading();
                 console.log('✅ Dashboard initialized successfully');
-                console.log(`📊 Loaded ${drills.length} drills`);
+                console.log(`📊 Loaded ${drills.length} drills and ${organizations.length} organizations`);
             } catch (error) {
                 hideLoading();
                 console.error('❌ Dashboard initialization failed:', error);
@@ -514,6 +649,7 @@
         // Load drills data
         async function loadDrills() {
             try {
+                console.log('📋 Loading drills...');
                 const response = await fetch(`${API_BASE}/drills`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -523,6 +659,12 @@
 
                 if (response.ok) {
                     drills = await response.json();
+                    console.log('📋 Loaded drills:', drills.length);
+                    console.log('📋 Drills data:', drills.map(d => ({ 
+                        name: d.name || d.drillName, 
+                        scheduledDate: d.scheduledDate, 
+                        visibility: d.visibility 
+                    })));
                 } else if (response.status === 401) {
                     logout();
                 }
@@ -538,6 +680,8 @@
             const monthElement = document.getElementById('currentMonth');
             
             if (!calendar || !monthElement) return;
+            
+            console.log('📅 Rendering calendar with', drills.length, 'drills');
             
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
@@ -606,10 +750,15 @@
                 const dayDate = new Date(year, month, day);
                 const dayDrills = drills.filter(drill => {
                     const drillDate = new Date(drill.scheduledDate);
-                    return drillDate.toDateString() === dayDate.toDateString();
+                    const matches = drillDate.toDateString() === dayDate.toDateString();
+                    if (matches) {
+                        console.log('📅 Found drill on', dayDate.toDateString(), ':', drill.name || drill.drillName);
+                    }
+                    return matches;
                 });
                 
                 if (dayDrills.length > 0) {
+                    console.log('📅 Day', day, 'has', dayDrills.length, 'drills');
                     dayElement.classList.add('has-drill');
                     dayElement.style.background = '#4f46e5';
                     dayElement.style.border = '2px solid #ff6b9d';
@@ -671,7 +820,7 @@
             renderCalendar();
         }
 
-        // Enhanced render drills list for left panel with compact styling
+        // Enhanced render drills list with better styling and display
         function renderDrillsList() {
             const drillsList = document.getElementById('drillsList');
             if (!drillsList) return;
@@ -681,19 +830,19 @@
             console.log('📋 Rendering drills list. Total drills:', drills.length);
             
             if (drills.length === 0) {
-                drillsList.innerHTML = '<p style="text-align: center; color: #a3a3a3; padding: 20px; font-size: 14px;">No drills scheduled. Add your first drill to get started!</p>';
+                drillsList.innerHTML = '<p style="text-align: center; color: #a3a3a3; padding: 20px;">No drills scheduled. Add your first drill to get started!</p>';
                 return;
             }
             
-            // Add a header with count (compact version)
+            // Add a header with count
             const header = document.createElement('div');
-            header.style.marginBottom = '10px';
-            header.style.padding = '8px';
+            header.style.marginBottom = '15px';
+            header.style.padding = '10px';
             header.style.background = '#2a2a2a';
             header.style.borderRadius = '5px';
-            header.style.textAlign = 'center';
             header.innerHTML = `
-                <span style="color: #ff6b9d; font-weight: bold; font-size: 14px;">Total: ${drills.length} drills</span>
+                <span style="color: #ff6b9d; font-weight: bold;">Total Drills: ${drills.length}</span>
+                <span style="color: #a3a3a3; margin-left: 20px;">Click on any drill to view details</span>
             `;
             drillsList.appendChild(header);
             
@@ -703,217 +852,40 @@
             sortedDrills.forEach((drill, index) => {
                 const drillItem = document.createElement('div');
                 drillItem.className = 'drill-item';
-                drillItem.style.background = '#2a2a2a';
-                drillItem.style.border = '1px solid #4a4a4a';
-                drillItem.style.borderRadius = '6px';
-                drillItem.style.padding = '12px';
-                drillItem.style.marginBottom = '8px';
-                drillItem.style.cursor = 'pointer';
-                drillItem.style.transition = 'all 0.3s ease';
-                
-                drillItem.addEventListener('mouseenter', () => {
-                    drillItem.style.background = '#3a3a3a';
-                    drillItem.style.borderColor = '#ff6b9d';
-                });
-                
-                drillItem.addEventListener('mouseleave', () => {
-                    drillItem.style.background = '#2a2a2a';
-                    drillItem.style.borderColor = '#4a4a4a';
-                });
-                
                 drillItem.onclick = () => showDrillDetails(drill);
                 
-                const drillName = document.createElement('h4');
+                const drillInfo = document.createElement('div');
+                drillInfo.className = 'drill-info';
+                
+                const drillName = document.createElement('h3');
                 drillName.textContent = drill.name || drill.drillName;
-                drillName.style.color = '#a5f3fc';
-                drillName.style.marginBottom = '4px';
-                drillName.style.fontSize = '14px';
-                drillName.style.fontWeight = '600';
                 
                 const drillDate = document.createElement('p');
                 drillDate.textContent = new Date(drill.scheduledDate).toLocaleDateString('en-US', {
-                    month: 'short',
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                drillDate.style.color = '#a3a3a3';
-                drillDate.style.marginBottom = '6px';
-                drillDate.style.fontSize = '12px';
                 
-                const drillStatus = document.createElement('span');
-                drillStatus.className = `drill-status ${drill.status}`;
+                const drillDescription = document.createElement('p');
+                drillDescription.textContent = drill.description || drill.notes || 'No description';
+                
+                drillInfo.appendChild(drillName);
+                drillInfo.appendChild(drillDate);
+                drillInfo.appendChild(drillDescription);
+                
+                const drillStatus = document.createElement('div');
+                drillStatus.className = `drill-status ${drill.status.toLowerCase()}`;
                 drillStatus.textContent = drill.status.toUpperCase();
-                drillStatus.style.padding = '2px 6px';
-                drillStatus.style.borderRadius = '10px';
-                drillStatus.style.fontSize = '10px';
-                drillStatus.style.fontWeight = 'bold';
                 
-                // Color code by status
-                switch (drill.status.toLowerCase()) {
-                    case 'completed':
-                        drillStatus.style.background = '#22c55e';
-                        drillStatus.style.color = 'white';
-                        break;
-                    case 'scheduled':
-                        drillStatus.style.background = '#3b82f6';
-                        drillStatus.style.color = 'white';
-                        break;
-                    case 'missed':
-                        drillStatus.style.background = '#ef4444';
-                        drillStatus.style.color = 'white';
-                        break;
-                    default:
-                        drillStatus.style.background = '#6b7280';
-                        drillStatus.style.color = 'white';
-                }
-                
-                drillItem.appendChild(drillName);
-                drillItem.appendChild(drillDate);
+                drillItem.appendChild(drillInfo);
                 drillItem.appendChild(drillStatus);
                 
                 drillsList.appendChild(drillItem);
             });
-        }
-
-        // Render today's drills in the right panel
-        function renderTodayDrills() {
-            const todayDrillsList = document.getElementById('todayDrillsList');
-            if (!todayDrillsList) return;
-            
-            const today = new Date();
-            const todayDrills = drills.filter(drill => {
-                const drillDate = new Date(drill.scheduledDate);
-                return drillDate.toDateString() === today.toDateString();
-            });
-            
-            todayDrillsList.innerHTML = '';
-            
-            if (todayDrills.length === 0) {
-                todayDrillsList.innerHTML = '<p style="color: #a3a3a3; font-size: 12px; text-align: center;">No drills scheduled for today</p>';
-                return;
-            }
-            
-            todayDrills.forEach(drill => {
-                const item = createSidebarDrillItem(drill);
-                todayDrillsList.appendChild(item);
-            });
-        }
-
-        // Render upcoming drills in the right panel
-        function renderUpcomingDrills() {
-            const upcomingDrillsList = document.getElementById('upcomingDrillsList');
-            if (!upcomingDrillsList) return;
-            
-            const today = new Date();
-            const nextWeek = new Date(today);
-            nextWeek.setDate(today.getDate() + 7);
-            
-            const upcomingDrills = drills.filter(drill => {
-                const drillDate = new Date(drill.scheduledDate);
-                return drillDate > today && drillDate <= nextWeek;
-            }).sort((a, b) => new Date(a.scheduledDate) - new Date(b.scheduledDate));
-            
-            upcomingDrillsList.innerHTML = '';
-            
-            if (upcomingDrills.length === 0) {
-                upcomingDrillsList.innerHTML = '<p style="color: #a3a3a3; font-size: 12px; text-align: center;">No drills in next 7 days</p>';
-                return;
-            }
-            
-            upcomingDrills.slice(0, 5).forEach(drill => { // Show max 5 upcoming drills
-                const item = createSidebarDrillItem(drill);
-                upcomingDrillsList.appendChild(item);
-            });
-        }
-
-        // Create sidebar drill item
-        function createSidebarDrillItem(drill) {
-            const item = document.createElement('div');
-            item.className = 'sidebar-drill-item';
-            item.onclick = () => showDrillDetails(drill);
-            
-            const name = document.createElement('div');
-            name.className = 'sidebar-drill-name';
-            name.textContent = drill.name || drill.drillName;
-            
-            const time = document.createElement('div');
-            time.className = 'sidebar-drill-time';
-            time.textContent = new Date(drill.scheduledDate).toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            const status = document.createElement('span');
-            status.className = `sidebar-drill-status ${drill.status}`;
-            status.textContent = drill.status;
-            
-            item.appendChild(name);
-            item.appendChild(time);
-            item.appendChild(status);
-            
-            return item;
-        }
-
-        // Update quick stats in right panel
-        function updateQuickStats() {
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            
-            const monthlyDrills = drills.filter(drill => {
-                const drillDate = new Date(drill.scheduledDate);
-                return drillDate.getMonth() === currentMonth && drillDate.getFullYear() === currentYear;
-            });
-            
-            const monthlyCompleted = monthlyDrills.filter(drill => drill.status === 'completed');
-            const monthlyPending = monthlyDrills.filter(drill => drill.status === 'scheduled');
-            
-            const monthlyDrillsEl = document.getElementById('monthlyDrills');
-            const monthlyCompletedEl = document.getElementById('monthlyCompleted');
-            const monthlyPendingEl = document.getElementById('monthlyPending');
-            
-            if (monthlyDrillsEl) monthlyDrillsEl.textContent = monthlyDrills.length;
-            if (monthlyCompletedEl) monthlyCompletedEl.textContent = monthlyCompleted.length;
-            if (monthlyPendingEl) monthlyPendingEl.textContent = monthlyPending.length;
-        }
-
-        // Handle quick add drill form
-        async function handleQuickAddDrill(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('quickDrillName').value;
-            const scheduledDate = document.getElementById('quickDrillDate').value;
-            const description = document.getElementById('quickDrillDescription').value;
-            
-            try {
-                const response = await fetch(`${API_BASE}/drills`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, scheduledDate, description })
-                });
-                
-                if (response.ok) {
-                    showNotification('Drill added successfully!', 'success');
-                    document.getElementById('quickAddForm').reset();
-                    await loadDrills();
-                    renderCalendar();
-                    renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
-                } else {
-                    const data = await response.json();
-                    showNotification(data.message || 'Failed to add drill', 'error');
-                }
-            } catch (error) {
-                console.error('Error adding drill:', error);
-                showNotification('Network error. Please try again.', 'error');
-            }
         }
 
         // Show drill details modal
@@ -1069,6 +1041,7 @@
             const name = document.getElementById('newDrillName').value;
             const scheduledDate = document.getElementById('newDrillDate').value;
             const description = document.getElementById('newDrillDescription').value;
+            const visibility = document.getElementById('newDrillVisibility').value;
             
             try {
                 const response = await fetch(`${API_BASE}/drills`, {
@@ -1077,7 +1050,7 @@
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, scheduledDate, description })
+                    body: JSON.stringify({ name, scheduledDate, description, visibility })
                 });
                 
                 if (response.ok) {
@@ -1086,9 +1059,6 @@
                     await loadDrills();
                     renderCalendar();
                     renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
                 } else {
                     const data = await response.json();
                     showNotification(data.message || 'Failed to add drill', 'error');
@@ -1099,9 +1069,65 @@
             }
         }
 
-        // Mark drill as completed
+        // Apply filters to drill list
+        async function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const teamFilter = document.getElementById('teamFilter').value;
+            const visibility = document.getElementById('visibilityFilter').value;
+            
+            console.log('🔍 Applying filters:', { status, teamFilter, visibility });
+            
+            try {
+                let url = `${API_BASE}/drills?`;
+                const params = new URLSearchParams();
+                
+                if (status) params.append('status', status);
+                if (teamFilter) params.append('teamFilter', teamFilter);
+                if (visibility) params.append('visibility', visibility);
+                
+                url += params.toString();
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    drills = await response.json();
+                    renderCalendar();
+                    renderDrillsList();
+                    showNotification(`Filter applied. Showing ${drills.length} drills.`, 'success');
+                } else {
+                    showNotification('Failed to apply filters', 'error');
+                }
+            } catch (error) {
+                console.error('Error applying filters:', error);
+                showNotification('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Clear all filters
+        async function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('teamFilter').value = 'team';
+            document.getElementById('visibilityFilter').value = '';
+            
+            await loadDrills();
+            renderCalendar();
+            renderDrillsList();
+            showNotification('Filters cleared', 'success');
+        }
+
+        // Mark drill as completed with timestamp
         async function markCompleted() {
-            if (!currentDrillId) return;
+            if (!currentDrillId) {
+                showNotification('No drill selected', 'error');
+                return;
+            }
+            
+            console.log('Marking drill as completed:', currentDrillId);
             
             try {
                 const response = await fetch(`${API_BASE}/drills/${currentDrillId}`, {
@@ -1110,20 +1136,26 @@
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ status: 'completed' })
+                    body: JSON.stringify({ 
+                        status: 'completed',
+                        completedAt: new Date().toISOString()
+                    })
                 });
                 
+                console.log('Mark completed response:', response.status);
+                
                 if (response.ok) {
+                    const updatedDrill = await response.json();
+                    console.log('Drill updated successfully:', updatedDrill);
                     showNotification('Drill marked as completed!', 'success');
                     closeDrillModal();
                     await loadDrills();
                     renderCalendar();
                     renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
                 } else {
-                    showNotification('Failed to update drill', 'error');
+                    const errorData = await response.json();
+                    console.error('Failed to update drill:', errorData);
+                    showNotification(errorData.message || 'Failed to update drill', 'error');
                 }
             } catch (error) {
                 console.error('Error updating drill:', error);
@@ -1133,7 +1165,14 @@
 
         // Delete drill
         async function deleteDrill() {
-            if (!currentDrillId || !confirm('Are you sure you want to delete this drill?')) return;
+            if (!currentDrillId) {
+                showNotification('No drill selected', 'error');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this drill?')) return;
+            
+            console.log('Deleting drill:', currentDrillId);
             
             try {
                 const response = await fetch(`${API_BASE}/drills/${currentDrillId}`, {
@@ -1144,17 +1183,19 @@
                     }
                 });
                 
+                console.log('Delete response:', response.status);
+                
                 if (response.ok) {
+                    console.log('Drill deleted successfully');
                     showNotification('Drill deleted successfully!', 'success');
                     closeDrillModal();
                     await loadDrills();
                     renderCalendar();
                     renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
                 } else {
-                    showNotification('Failed to delete drill', 'error');
+                    const errorData = await response.json();
+                    console.error('Failed to delete drill:', errorData);
+                    showNotification(errorData.message || 'Failed to delete drill', 'error');
                 }
             } catch (error) {
                 console.error('Error deleting drill:', error);
@@ -1169,13 +1210,18 @@
 
         // Reschedule drill
         async function reschedule() {
-            if (!currentDrillId) return;
+            if (!currentDrillId) {
+                showNotification('No drill selected', 'error');
+                return;
+            }
             
             const newDate = document.getElementById('newScheduleDate').value;
             if (!newDate) {
                 showNotification('Please select a new date and time', 'error');
                 return;
             }
+            
+            console.log('Rescheduling drill:', currentDrillId, 'to:', newDate);
             
             try {
                 const response = await fetch(`${API_BASE}/drills/${currentDrillId}`, {
@@ -1187,17 +1233,20 @@
                     body: JSON.stringify({ scheduledDate: newDate })
                 });
                 
+                console.log('Reschedule response:', response.status);
+                
                 if (response.ok) {
+                    const updatedDrill = await response.json();
+                    console.log('Drill rescheduled successfully:', updatedDrill);
                     showNotification('Drill rescheduled successfully!', 'success');
                     closeDrillModal();
                     await loadDrills();
                     renderCalendar();
                     renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
                 } else {
-                    showNotification('Failed to reschedule drill', 'error');
+                    const errorData = await response.json();
+                    console.error('Failed to reschedule drill:', errorData);
+                    showNotification(errorData.message || 'Failed to reschedule drill', 'error');
                 }
             } catch (error) {
                 console.error('Error rescheduling drill:', error);
@@ -1254,9 +1303,6 @@
                     await loadDrills();
                     renderCalendar();
                     renderDrillsList();
-                    renderTodayDrills();
-                    renderUpcomingDrills();
-                    updateQuickStats();
                 } else {
                     const error = await response.json();
                     showNotification(error.message || 'Failed to generate schedule', 'error');
@@ -1284,6 +1330,373 @@
             
             if (endDateInput) {
                 endDateInput.value = nextWeek.toISOString().split('T')[0];
+            }
+        }
+
+        /**
+         * ===================================================
+         * ORGANIZATION MANAGEMENT FUNCTIONALITY
+         * ===================================================
+         */
+
+        let organizations = [];
+        let selectedOrganization = null;
+
+        // Load organizations
+        async function loadOrganizations() {
+            try {
+                const response = await fetch(`${API_BASE}/organizations`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    organizations = await response.json();
+                    renderOrganizationsList();
+                    loadOrganizationsForSelect(); // Also update the select dropdown
+                } else {
+                    console.error('Failed to load organizations');
+                    showNotification('Failed to load organizations', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading organizations:', error);
+                showNotification('Network error loading organizations', 'error');
+            }
+        }
+
+        // Render organizations list
+        function renderOrganizationsList() {
+            const orgsList = document.getElementById('organizationsList');
+            if (!orgsList) return;
+
+            orgsList.innerHTML = '';
+
+            if (organizations.length === 0) {
+                orgsList.innerHTML = '<p style="text-align: center; color: #a3a3a3; padding: 20px;">No organizations found. Create your first organization!</p>';
+                return;
+            }
+
+            organizations.forEach(org => {
+                const orgItem = document.createElement('div');
+                orgItem.className = 'org-item';
+                orgItem.onclick = () => selectOrganization(org);
+
+                orgItem.innerHTML = `
+                    <div class="org-name">${org.name}</div>
+                    <div class="org-details">ID: ${org.companyId}</div>
+                    <div class="org-details">${org.industry || 'No industry specified'}</div>
+                    <div class="org-stats">
+                        <span>📊 ${org.totalDrills || 0} drills</span>
+                        <span>📅 ${org.plannedDrillsPerYear}/year</span>
+                    </div>
+                `;
+
+                orgsList.appendChild(orgItem);
+            });
+        }
+
+        // Select organization
+        function selectOrganization(org) {
+            selectedOrganization = org;
+            
+            // Update UI to show selection
+            document.querySelectorAll('.org-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.target.closest('.org-item').classList.add('selected');
+
+            showNotification(`Selected: ${org.name}`, 'success');
+        }
+
+        // Show organization management modal
+        function showOrganizationModal() {
+            document.getElementById('organizationModal').style.display = 'block';
+            loadOrganizationsForSelect();
+        }
+
+        // Close organization modal
+        function closeOrganizationModal() {
+            document.getElementById('organizationModal').style.display = 'none';
+            document.getElementById('createOrgForm').reset();
+            document.getElementById('scheduleDrillsForm').reset();
+            document.getElementById('drillPreview').classList.add('hidden');
+        }
+
+        // Show add organization modal (simplified)
+        function showAddOrganizationModal() {
+            document.getElementById('addOrganizationModal').style.display = 'block';
+        }
+
+        // Close add organization modal
+        function closeAddOrganizationModal() {
+            document.getElementById('addOrganizationModal').style.display = 'none';
+            document.getElementById('addOrgForm').reset();
+        }
+
+        // Switch between organization tabs
+        function showOrgTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.org-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.getElementById('createOrgTab').classList.toggle('hidden', tabName !== 'create');
+            document.getElementById('scheduleDrillsTab').classList.toggle('hidden', tabName !== 'schedule');
+        }
+
+        // Handle create organization form
+        async function handleCreateOrganization(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const orgData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE}/organizations`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orgData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('Organization created successfully!', 'success');
+                    closeOrganizationModal();
+                    await loadOrganizations();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.message || 'Failed to create organization', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating organization:', error);
+                showNotification('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Handle add organization form (simplified)
+        async function handleAddOrganization(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const orgData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(`${API_BASE}/organizations`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orgData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('Organization added successfully!', 'success');
+                    closeAddOrganizationModal();
+                    await loadOrganizations();
+                } else {
+                    const error = await response.json();
+                    showNotification(error.message || 'Failed to add organization', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding organization:', error);
+                showNotification('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Load organizations for select dropdown
+        function loadOrganizationsForSelect() {
+            const select = document.getElementById('scheduleOrgSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Choose an organization...</option>';
+            
+            organizations.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org._id;
+                option.textContent = `${org.name} (${org.companyId})`;
+                option.dataset.plannedDrills = org.plannedDrillsPerYear;
+                select.appendChild(option);
+            });
+        }
+
+        // Handle organization select change for scheduling
+        function handleOrgSelectChange() {
+            const select = document.getElementById('scheduleOrgSelect');
+            const numberOfDrillsInput = document.getElementById('numberOfDrills');
+            
+            if (select.value && numberOfDrillsInput) {
+                const selectedOption = select.options[select.selectedIndex];
+                const plannedDrills = selectedOption.dataset.plannedDrills;
+                numberOfDrillsInput.value = plannedDrills || '';
+            }
+        }
+
+        // Preview scheduled drills
+        function previewScheduledDrills() {
+            const orgSelect = document.getElementById('scheduleOrgSelect');
+            const startDate = document.getElementById('scheduleStartDate').value;
+            const endDate = document.getElementById('scheduleEndDate').value;
+            const numberOfDrills = document.getElementById('numberOfDrills').value;
+
+            if (!orgSelect.value || !startDate || !endDate || !numberOfDrills) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            const interval = Math.floor(totalDays / numberOfDrills);
+
+            const drillTypes = [
+                "Fire Drill",
+                "Lockdown Drill",
+                "Earthquake Drill",
+                "Medical Emergency Drill",
+                "Severe Weather Drill"
+            ];
+
+            const previewContainer = document.getElementById('drillPreviewList');
+            previewContainer.innerHTML = '';
+
+            for (let i = 0; i < numberOfDrills; i++) {
+                const drillDate = new Date(start);
+                drillDate.setDate(start.getDate() + (i * interval));
+                const drillType = drillTypes[i % drillTypes.length];
+
+                const previewItem = document.createElement('div');
+                previewItem.className = 'drill-preview-item';
+                previewItem.innerHTML = `
+                    <span class="drill-name">${drillType}</span>
+                    <span class="drill-date">${drillDate.toLocaleDateString()}</span>
+                `;
+                previewContainer.appendChild(previewItem);
+            }
+
+            document.getElementById('drillPreview').classList.remove('hidden');
+        }
+
+        // Handle schedule drills form
+        async function handleScheduleDrills(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const scheduleData = Object.fromEntries(formData);
+
+            console.log('📅 Schedule data:', scheduleData);
+
+            if (!scheduleData.organizationId) {
+                showNotification('Please select an organization', 'error');
+                return;
+            }
+
+            if (!scheduleData.startDate || !scheduleData.endDate) {
+                showNotification('Please select start and end dates', 'error');
+                return;
+            }
+
+            if (!scheduleData.numberOfDrills || scheduleData.numberOfDrills < 1) {
+                showNotification('Please enter a valid number of drills', 'error');
+                return;
+            }
+
+            try {
+                console.log('📅 Sending request to:', `${API_BASE}/organizations/${scheduleData.organizationId}/schedule-drills`);
+                
+                const response = await fetch(`${API_BASE}/organizations/${scheduleData.organizationId}/schedule-drills`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        startDate: scheduleData.startDate,
+                        endDate: scheduleData.endDate,
+                        numberOfDrills: parseInt(scheduleData.numberOfDrills)
+                    })
+                });
+                
+                console.log('📅 Response status:', response.status);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('📅 Success result:', result);
+                    showNotification(`${result.drillsGenerated} drills scheduled successfully for ${result.organization}!`, 'success');
+                    closeOrganizationModal();
+                    await loadDrills();
+                    await loadOrganizations();
+                    renderCalendar();
+                    renderDrillsList();
+                } else {
+                    const error = await response.json();
+                    console.error('📅 Error response:', error);
+                    showNotification(error.message || 'Failed to schedule drills', 'error');
+                }
+            } catch (error) {
+                console.error('Error scheduling drills:', error);
+                showNotification('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Create a test organization for demo purposes
+        async function createTestOrganization() {
+            try {
+                console.log('🏢 Creating test organization...');
+                
+                const response = await fetch(`${API_BASE}/organizations`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        companyId: 'ABC-001',
+                        name: 'ABC Corporation',
+                        description: 'Sample organization for testing',
+                        industry: 'Technology',
+                        location: 'New York, NY',
+                        plannedDrillsPerYear: 12,
+                        drillTypes: [
+                            'Fire Evacuation Drill',
+                            'Earthquake Drill',
+                            'Lockdown Drill',
+                            'Medical Emergency Drill',
+                            'Severe Weather Drill'
+                        ]
+                    })
+                });
+
+                console.log('🏢 Test org creation response status:', response.status);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Test organization created successfully:', result);
+                    await loadOrganizations();
+                    showNotification('Test organization created successfully!', 'success');
+                } else {
+                    const error = await response.json();
+                    console.error('❌ Test organization creation failed:', error);
+                    
+                    // If it's a duplicate error, that's okay - just load existing organizations
+                    if (error.message && error.message.includes('already exists')) {
+                        console.log('📋 Organization already exists, continuing...');
+                        await loadOrganizations();
+                    } else {
+                        showNotification(`Failed to create test organization: ${error.message}`, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error creating test organization:', error);
+                showNotification('Network error creating test organization', 'error');
             }
         }
 
@@ -1323,12 +1736,9 @@
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('registerForm').addEventListener('submit', handleRegister);
             document.getElementById('addDrillForm').addEventListener('submit', handleAddDrill);
-            
-            // Quick add form submission
-            const quickAddForm = document.getElementById('quickAddForm');
-            if (quickAddForm) {
-                quickAddForm.addEventListener('submit', handleQuickAddDrill);
-            }
+            document.getElementById('addOrgForm').addEventListener('submit', handleAddOrganization);
+            document.getElementById('createOrgForm').addEventListener('submit', handleCreateOrganization);
+            document.getElementById('scheduleDrillsForm').addEventListener('submit', handleScheduleDrills);
             
             // Modal close on outside click
             window.addEventListener('click', (event) => {
